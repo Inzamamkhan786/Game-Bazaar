@@ -1,0 +1,11 @@
+node_modules/
+.env
+dist/
+build/
+logs/
+uploads/games/*.jpg
+uploads/games/*.png
+uploads/games/*.webp
+*.log
+.DS_Store
+coverage/
