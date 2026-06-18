@@ -5,8 +5,7 @@ import { gamesAPI, paymentsAPI } from '../api';
 import { GameCardSkeleton } from '../components/ui/Skeleton';
 import Layout from '../components/layout/Layout';
 import toast from 'react-hot-toast';
-
-const API_BASE = import.meta.env.VITE_API_URL?.replace('/api/v1', '') || '';
+import { getImageUrl } from '../utils/image';
 
 const GameDetailPage = () => {
   const { id } = useParams();
@@ -215,8 +214,6 @@ const GameDetailPage = () => {
   if (!game) return null;
 
   const images = game.images?.length > 0 ? game.images : [];
-
-  const getImageUrl = (img) => img?.startsWith('http') ? img : `${API_BASE}/${img}`;
 
   return (
     <Layout>

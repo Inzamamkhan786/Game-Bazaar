@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react';
 import { gamesAPI } from '../../api';
 import AdminLayout from '../../components/admin/AdminLayout';
 import toast from 'react-hot-toast';
-
-const API_BASE = import.meta.env.VITE_API_URL?.replace('/api/v1', '') || '';
+import { getImageUrl } from '../../utils/image';
 const CATEGORIES = ['Action','Adventure','RPG','Sports','Strategy','FPS','Racing','Simulation','Horror','Indie','Sandbox','Fighting'];
 
 const emptyForm = {
@@ -207,7 +206,7 @@ const AdminGames = () => {
                           <div className="flex items-center gap-3">
                             <div className="w-11 h-11 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-200">
                               {game.images?.[0]
-                                ? <img src={`${API_BASE}/${game.images[0]}`} alt={game.game_name} className="w-full h-full object-cover" onError={e => e.target.style.display='none'} />
+                                ? <img src={getImageUrl(game.images[0])} alt={game.game_name} className="w-full h-full object-cover" onError={e => e.target.style.display='none'} />
                                 : <div className="w-full h-full flex items-center justify-center text-xl">🎮</div>
                               }
                             </div>
@@ -424,7 +423,7 @@ const AdminGames = () => {
                       <div className="flex gap-2 flex-wrap">
                         {editGame.images.map((img, i) => (
                           <div key={i} className="w-14 h-14 rounded-xl overflow-hidden border border-slate-200">
-                            <img src={`${API_BASE}/${img}`} alt="" className="w-full h-full object-cover" onError={e => e.target.style.display='none'} />
+                            <img src={getImageUrl(img)} alt="" className="w-full h-full object-cover" onError={e => e.target.style.display='none'} />
                           </div>
                         ))}
                       </div>

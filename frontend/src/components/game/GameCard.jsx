@@ -3,8 +3,7 @@ import { useSelector } from 'react-redux';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-
-const API_BASE = import.meta.env.VITE_API_URL?.replace('/api/v1', '') || '';
+import { getImageUrl } from '../../utils/image';
 
 const GameCard = ({ game, onBuy }) => {
   const { isAuthenticated } = useSelector((s) => s.auth);
@@ -15,9 +14,7 @@ const GameCard = ({ game, onBuy }) => {
     ? Math.round(((game.original_price - game.sale_price) / game.original_price) * 100)
     : 0;
 
-  const imageUrl = game.images?.[0]
-    ? (game.images[0].startsWith('http') ? game.images[0] : `${API_BASE}/${game.images[0]}`)
-    : null;
+  const imageUrl = getImageUrl(game.images?.[0]);
 
   const handleBuy = (e) => {
     e.preventDefault();

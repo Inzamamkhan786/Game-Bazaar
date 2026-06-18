@@ -1,15 +1,26 @@
 const gameService = require('../services/game.service');
 const ApiResponse = require('../utils/apiResponse');
-const path = require('path');
+const { deleteStorageObjects, uploadGameImages } = require('../utils/storage');
+
+const parseFeatures = (features) => {
+  if (!features) return [];
+  return Array.isArray(features) ? features : JSON.parse(features);
+};
 
 const createGame = async (req, res, next) => {
+  let uploadedImages = [];
+
   try {
-    const images = req.files ? req.files.map((f) => `uploads/games/${f.filename}`) : [];
+    uploadedImages = await uploadGameImages(req.files || []);
+    const images = uploadedImages.map((image) => image.url);
     const { features, ...rest } = req.body;
-    const parsedFeatures = features ? (Array.isArray(features) ? features : JSON.parse(features)) : [];
+    const parsedFeatures = parseFeatures(features);
     const game = await gameService.createGame({ ...rest, features: parsedFeatures, images });
     res.status(201).json(new ApiResponse(201, game, 'Game created successfully'));
-  } catch (error) { next(error); }
+  } catch (error) {
+    await deleteStorageObjects(uploadedImages.map((image) => image.key));
+    next(error);
+  }
 };
 
 const getGames = async (req, res, next) => {
@@ -41,15 +52,21 @@ const getGameById = async (req, res, next) => {
 };
 
 const updateGame = async (req, res, next) => {
+  let uploadedImages = [];
+
   try {
-    const newImages = req.files ? req.files.map((f) => `uploads/games/${f.filename}`) : [];
+    uploadedImages = await uploadGameImages(req.files || []);
+    const newImages = uploadedImages.map((image) => image.url);
     const { features, ...rest } = req.body;
     if (features) {
       rest.features = Array.isArray(features) ? features : JSON.parse(features);
     }
     const game = await gameService.updateGame(req.params.id, rest, newImages);
     res.json(new ApiResponse(200, game, 'Game updated successfully'));
-  } catch (error) { next(error); }
+  } catch (error) {
+    await deleteStorageObjects(uploadedImages.map((image) => image.key));
+    next(error);
+  }
 };
 
 const deleteGame = async (req, res, next) => {

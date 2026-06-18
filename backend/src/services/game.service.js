@@ -1,8 +1,7 @@
 const { query, withTransaction } = require('../db/pool');
 const { getPaginationOffset } = require('../utils/helpers');
 const ApiError = require('../utils/apiError');
-const path = require('path');
-const fs = require('fs');
+const { deleteStorageObjects } = require('../utils/storage');
 
 /**
  * Create a new game
@@ -124,16 +123,12 @@ const updateGame = async (id, updates, newImages) => {
     if (updates[field] !== undefined) fields[field] = updates[field];
   });
 
-  // Handle images
   let images = game.images || [];
+  const removedImages = [];
   if (updates.removeImages) {
     const toRemove = Array.isArray(updates.removeImages) ? updates.removeImages : [updates.removeImages];
     images = images.filter((img) => !toRemove.includes(img));
-    // Delete physical files
-    toRemove.forEach((imgPath) => {
-      const fullPath = path.join(process.cwd(), imgPath);
-      if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
-    });
+    removedImages.push(...toRemove);
   }
   if (newImages && newImages.length) {
     images = [...images, ...newImages];
@@ -170,6 +165,11 @@ const updateGame = async (id, updates, newImages) => {
     `UPDATE games SET ${setClauses.join(', ')} WHERE id = $${idx} RETURNING *`,
     values
   );
+
+  if (removedImages.length) {
+    await deleteStorageObjects(removedImages);
+  }
+
   return rows[0];
 };
 
@@ -186,15 +186,11 @@ const deleteGame = async (id) => {
   );
   if (activeOrders.length) throw new ApiError(409, 'Cannot delete game with pending orders');
 
-  // Delete physical images
-  if (game.images && game.images.length) {
-    game.images.forEach((imgPath) => {
-      const fullPath = path.join(process.cwd(), imgPath);
-      if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
-    });
-  }
-
   await query('DELETE FROM games WHERE id = $1', [id]);
+
+  if (game.images && game.images.length) {
+    await deleteStorageObjects(game.images);
+  }
 };
 
 /**

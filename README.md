@@ -21,11 +21,11 @@ A production-ready full-stack web application for selling discounted PC game acc
 - **JWT** - Access + Refresh token authentication
 - **Bcrypt** - Password hashing
 - **Multer** - Image uploads
+- **Supabase Storage** - Game image uploads via S3-compatible bucket
 - **Razorpay** - Payment gateway
 - **WhatsApp Cloud API** - Order notifications
 - **Jest + Supertest** - API testing
 
----
 
 ## 📁 Project Structure
 
@@ -45,7 +45,7 @@ GameBazaar/
 │   ├── tests/
 │   │   ├── integration/    # API integration tests
 │   │   └── unit/           # Unit tests
-│   ├── uploads/games/      # Uploaded game images
+│   ├── uploads/games/      # Legacy local upload fallback
 │   └── .env.example
 │
 └── frontend/
@@ -95,7 +95,7 @@ cd ../frontend && npm install
 ```bash
 # Backend
 cp .env.example .env
-# Edit .env with your PostgreSQL credentials, JWT secrets, Razorpay keys, WhatsApp token
+# Edit .env with your PostgreSQL credentials, JWT secrets, Razorpay keys, WhatsApp token, and Supabase storage credentials
 
 # Frontend
 cp .env.example .env.local
@@ -240,6 +240,11 @@ npm run test:coverage
 2. Get the connection string
 3. Set `DATABASE_URL` in backend environment variables
 4. Run `npm run migrate` once to create tables
+
+### Image Storage (Supabase)
+1. Create a public Supabase Storage bucket for game images.
+2. Set the S3-compatible storage env vars in `backend/.env`.
+3. Uploaded game images will be saved in that bucket and the database will store the public image URLs.
 
 ---
 
