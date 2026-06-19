@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Layout from '../components/layout/Layout';
 
 const SupportPage = () => {
-  const adminWhatsApp = import.meta.env.VITE_ADMIN_WHATSAPP || '919999999999';
+  const adminWhatsApp = import.meta.env.VITE_ADMIN_WHATSAPP || '919931902300';
   const supportMessage = encodeURIComponent('Hello Admin, I need help regarding my order.');
 
   const faqs = [

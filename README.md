@@ -180,7 +180,7 @@ Configure in backend `.env`:
 ```env
 WHATSAPP_ACCESS_TOKEN=your_token
 WHATSAPP_PHONE_NUMBER_ID=your_phone_id
-ADMIN_WHATSAPP_NUMBER=91xxxxxxxxxx
+ADMIN_WHATSAPP_NUMBER=919931902300
 ```
 
 ---
