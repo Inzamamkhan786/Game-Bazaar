@@ -1,13 +1,15 @@
 const nodemailer = require('nodemailer');
 const logger = require('../utils/logger');
 
+const normalizeAppPassword = (value) => String(value || '').replace(/\s+/g, '');
+
 /**
  * Creates a Gmail transporter using App Password.
  * No OAuth, no business account — just Gmail + App Password.
  */
 const getTransporter = () => {
   const user = process.env.GMAIL_USER;
-  const pass = process.env.GMAIL_APP_PASSWORD;
+  const pass = normalizeAppPassword(process.env.GMAIL_APP_PASSWORD);
 
   if (!user || !pass || user === 'your_gmail@gmail.com') {
     return null; // not configured yet
@@ -17,6 +19,21 @@ const getTransporter = () => {
     service: 'gmail',
     auth: { user, pass },
   });
+};
+
+const getEmailConfigStatus = () => {
+  const user = process.env.GMAIL_USER;
+  const pass = normalizeAppPassword(process.env.GMAIL_APP_PASSWORD);
+
+  if (!user || user === 'your_gmail@gmail.com') {
+    return { ok: false, message: 'GMAIL_USER is not configured' };
+  }
+
+  if (!pass) {
+    return { ok: false, message: 'GMAIL_APP_PASSWORD is not configured' };
+  }
+
+  return { ok: true, message: 'Gmail credentials are present' };
 };
 
 /**
@@ -210,4 +227,4 @@ const testEmailConnection = async () => {
   }
 };
 
-module.exports = { sendNewOrderEmail, sendCustomerConfirmationEmail, testEmailConnection };
+module.exports = { sendNewOrderEmail, sendCustomerConfirmationEmail, testEmailConnection, getEmailConfigStatus };

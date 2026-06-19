@@ -97,9 +97,9 @@ const HomePage = () => {
           {/* Stats */}
           <div className="flex justify-center items-center gap-4 sm:gap-8 mt-10 sm:mt-12 w-full animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
             {[
-              { label: 'Games Available', value: '500+' },
+              { label: 'Games Available', value: '200+' },
               { label: 'Happy Customers', value: '1K+' },
-              { label: 'Avg. Discount', value: '60%' },
+              { label: 'Avg. Discount', value: '85%' },
             ].map((stat) => (
               <div key={stat.label} className="text-center flex-1 sm:flex-initial min-w-[70px]">
                 <p className="text-xl sm:text-2xl font-bold text-white">{stat.value}</p>

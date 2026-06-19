@@ -2,6 +2,7 @@ require('dotenv').config();
 const app = require('./app');
 const { testConnection } = require('./db/pool');
 const logger = require('./utils/logger');
+const { getEmailConfigStatus } = require('./services/email.service');
 
 const PORT = parseInt(process.env.PORT) || 5000;
 
@@ -19,6 +20,8 @@ const startServer = async () => {
       logger.info(`📡 API Base: http://localhost:${PORT}/api/v1`);
       logger.info(`🔐 Payment security: idempotency=ON, webhook-dedup=ON, card-storage=OFF`);
       logger.info(`🪝 Webhook secret: ${process.env.RAZORPAY_WEBHOOK_SECRET && process.env.RAZORPAY_WEBHOOK_SECRET !== 'your_webhook_secret_here' ? 'CONFIGURED ✅' : 'NOT SET ⚠️  (set RAZORPAY_WEBHOOK_SECRET in .env)'}`);
+      const emailStatus = getEmailConfigStatus();
+      logger.info(`✉️ Gmail email: ${emailStatus.ok ? 'CONFIGURED ✅' : `NOT READY ⚠️ (${emailStatus.message})`}`);
     });
 
     // Purge expired idempotency keys every hour (keeps the table lean)
